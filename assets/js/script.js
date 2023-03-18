@@ -9,6 +9,7 @@ if (use_youtubeAPI) {API_KEY = keys.jo};
 //query parameters -- vanilla javascript but could do JQuery
 const $searchBtn = document.getElementById('searchBtn');
 const $container = document.querySelector('.container');
+const $container2 = document.querySelector('.container2');
 var carousel = document.querySelector(".carouselbox");
 var next = carousel.querySelector(".next");
 var prev = carousel.querySelector(".prev");
@@ -55,6 +56,7 @@ function handleSubmit(event) {
 const callBoredAPI = function(customURL) {
 
   $container.innerHTML = "";
+  $container2.style.display='block';
 
   fetch(`https://www.boredapi.com/api/activity${customURL}`)
     .then(function (response) {
