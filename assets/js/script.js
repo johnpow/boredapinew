@@ -1,6 +1,10 @@
 const url = 'https://www.googleapis.com/youtube/v3/search';
-const API_KEY = keys.jo;
-use_youtubeAPI = false; //false will pull up a default set of video to conserve API KEY limit -- true will query actual YouTube API (100 queries per day per key)
+let API_KEY;
+
+let use_youtubeAPI = confirm('Do you want to use API KEY?'); //false will pull up a default set of video to conserve API KEY limit -- true will query actual YouTube API (100 queries per day per key)
+
+if (use_youtubeAPI) {API_KEY = keys.jo};
+
 
 //query parameters -- vanilla javascript but could do JQuery
 const $searchBtn = document.getElementById('searchBtn');
@@ -178,12 +182,19 @@ const renderSearch = function () {
       searchButHist.innerHTML='';
     
       if (buttonHist !== null) {
-        buttonHist.forEach(function (item) {
+        buttonHist.forEach(function (item,i) {
           const pastActList = document.createElement('li');
           const pastActObj = document.createElement('a');
           pastActObj.textContent = `Activity: ${item[0]} | (Video: ${item[2]})`;
           pastActObj.setAttribute('href',item[1])
           pastActObj.setAttribute('target','_blank');
+
+          pastActList.setAttribute("data-index", i);
+
+          var button = document.createElement("button");
+          button.textContent = "Remove ✔️";
+          pastActList.appendChild(button);
+
           pastActList.appendChild(pastActObj);
           searchButHist.appendChild(pastActList);
         });
@@ -196,10 +207,25 @@ renderSearch();
 
 const keepMe = function () {
   buttonHist.unshift([boredActivity,carouselVideo.getAttribute('src'),videoName]);
-  localStorage.setItem("searchHist", JSON.stringify(buttonHist))
+  storeSearch();
   renderSearch();
 };
 
+
+const storeSearch = function () {
+  localStorage.setItem("searchHist", JSON.stringify(buttonHist))
+};
+
+searchButHist.addEventListener("click", function(event) {
+  var element = event.target;
+  if (element.matches("button") === true) {
+    var index = element.parentElement.getAttribute("data-index");
+    buttonHist.splice(index, 1);
+
+    storeSearch();
+    renderSearch();
+  }
+});
 
 $searchBtn.addEventListener('click', handleSubmit);
 stashMe.addEventListener('click', keepMe);
