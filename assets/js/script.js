@@ -15,6 +15,10 @@ var submitOption = document.getElementById("submit-option");
 var showValue = document.getElementById("user-form");
 let buttonHist = JSON.parse(localStorage.getItem("searchHist"));
 const searchButHist = document.getElementById("oldsearch");
+const stashMe = document.getElementById("yessur");
+let boredActivity;
+let carouselVideo;
+let videoName;
 
 // Function to display selected value on screen
 function handleSubmit(event) {
@@ -63,7 +67,8 @@ const callBoredAPI = function(customURL) {
 
     // Create a header with the activity
       const activityName = document.createElement('h1');
-      activityName.textContent = 'Activity: ' + boredapi.activity;
+      boredActivity =  boredapi.activity;
+      activityName.textContent = 'Activity: ' + boredActivity;
       $container.appendChild(activityName);
     // Temporary text to understand details about the activity
       const info = document.createElement('p');
@@ -71,10 +76,7 @@ const callBoredAPI = function(customURL) {
       $container.appendChild(info);
         // helps determine whether to call youtube api or dummy api
     
-        buttonHist.unshift(boredapi.activity);
-        console.log(buttonHist)
-        localStorage.setItem("searchHist", JSON.stringify(buttonHist))
-    
+
 
       if (use_youtubeAPI) {
       callYoutubeAPI(boredapi);
@@ -105,16 +107,26 @@ const callYoutubeAPI = function(boredapi) {
 const dummyYoutube = function() {
       data = {
         items: [
-        {id: {videoId:'5iZltDLFOfo'}},
-        {id: {videoId:'iC5dWobPSik'}},
-        {id: {videoId:'AArJoXSxzrM'}},
-        {id: {videoId:'PPG1-CqAghA'}},
-        {id: {videoId:'ofVXzHwx6Fk'}},
-        {id: {videoId:'kuY2nWj_EhA'}},
-        {id: {videoId:'LGYEE4Jjpkc'}},
-        {id: {videoId:'LAn0e2DOOnI'}},
-        {id: {videoId:'ypEcwmvUgR8'}},
-        {id: {videoId:'PznJqxon4zE'}}]};
+        {id: {videoId:'5iZltDLFOfo'},
+         snippet: {title:'Placeholder 1'}},
+        {id: {videoId:'iC5dWobPSik'},
+        snippet: {title:'Placeholder 2'}},
+        {id: {videoId:'AArJoXSxzrM'},
+        snippet: {title:'Placeholder 3'}},
+        {id: {videoId:'PPG1-CqAghA'},
+        snippet: {title:'Placeholder 4'}},
+        {id: {videoId:'ofVXzHwx6Fk'},
+        snippet: {title:'Placeholder 5'}},
+        {id: {videoId:'kuY2nWj_EhA'},
+        snippet: {title:'Placeholder 6'}},
+        {id: {videoId:'LGYEE4Jjpkc'},
+        snippet: {title:'Placeholder 7'}},
+        {id: {videoId:'LAn0e2DOOnI'},
+        snippet: {title:'Placeholder 8'}},
+        {id: {videoId:'ypEcwmvUgR8'},
+        snippet: {title:'Placeholder 9'}},
+        {id: {videoId:'PznJqxon4zE'},
+        snippet: {title:'Placeholder 10'}},]};
 
         showVideos(data);
 };
@@ -129,7 +141,7 @@ const showVideos = function(data) {
 
     //loop through videos and create an embeded video for each (currently 10)
     navigate(0);
-    renderSearch();
+    
     };
     
 function navigate(direction) {
@@ -140,8 +152,10 @@ function navigate(direction) {
         index = 0;
       }
       currentImage = data.items[index];
-      let carouselVideo = document.querySelector(".videoNew");
+      carouselVideo = document.querySelector(".videoNew");
       carouselVideo.setAttribute('src', `https://www.youtube.com/embed/${currentImage.id.videoId}`)
+      videoName = currentImage.snippet.title;
+      
     }
     
     carousel.addEventListener("click", function() {
@@ -157,10 +171,9 @@ function navigate(direction) {
       event.stopPropagation();
       navigate(-1);
     });
-
  
 
-    const renderSearch = function () {
+const renderSearch = function () {
 
       searchButHist.innerHTML='';
     
@@ -168,8 +181,8 @@ function navigate(direction) {
         buttonHist.forEach(function (item) {
           const pastActList = document.createElement('li');
           const pastActObj = document.createElement('a');
-          pastActObj.textContent = item;
-          pastActObj.setAttribute('href',`https://www.youtube.com/results?search_query=${item}`);
+          pastActObj.textContent = `Activity: ${item[0]} | (Video: ${item[2]})`;
+          pastActObj.setAttribute('href',item[1])
           pastActObj.setAttribute('target','_blank');
           pastActList.appendChild(pastActObj);
           searchButHist.appendChild(pastActList);
@@ -181,6 +194,14 @@ function navigate(direction) {
 renderSearch();
 
 
+const keepMe = function () {
+  buttonHist.unshift([boredActivity,carouselVideo.getAttribute('src'),videoName]);
+  localStorage.setItem("searchHist", JSON.stringify(buttonHist))
+  renderSearch();
+};
+
+
 $searchBtn.addEventListener('click', handleSubmit);
+stashMe.addEventListener('click', keepMe);
 
 
